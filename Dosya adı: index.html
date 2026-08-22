@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@gzlyorum - TikTok Takip</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+        h1 { font-size: 2.5em; margin-bottom: 10px; }
+        .subtitle { font-size: 1.1em; opacity: 0.9; }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        .stat-label { 
+            font-size: 0.9em; 
+            color: #999; 
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .stat-value { 
+            font-size: 2.5em; 
+            font-weight: bold; 
+            color: #667eea; 
+        }
+        .chart-container {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+        table {
+            width: 100%;
+            background: white;
+            border-collapse: collapse;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 40px;
+        }
+        th {
+            background: #667eea;
+            color: white;
+            padding: 18px;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+        }
+        td {
+            padding: 15px 18px;
+            border-bottom: 1px solid #eee;
+        }
+        tr:hover { background: #f9f9f9; }
+        .status { 
+            text-align: center; 
+            color: white; 
+            font-size: 0.95em;
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+        }
+        .loading { text-align: center; padding: 40px; color: white; }
+        .error { 
+            background: #ff6b6b;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎵 @gzlyorum</h1>
+            <p class="subtitle">TikTok Videolarım - Günlük Takip</p>
+        </header>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-label">📊 Son Güncelleme</div>
+                <div class="stat-value" id="lastUpdate">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">📝 Veri Sayısı</div>
+                <div class="stat-value" id="dataCount">-</div>
+            </div>
+        </div>
+
+        <div id="content">
+            <div class="loading">⏳ Veriler yükleniyor...</div>
+        </div>
+
+        <div class="status">
+            ⏱️ Veriler her gün 20:00 UTC (23:00 Türkiye) saatinde otomatik olarak güncelleniyor
+        </div>
+    </div>
+
+    <script>
+        async function loadData() {
+            try {
+                const response = await fetch('data.json');
+                const data = await response.json();
+                
+                if (data.length === 0) {
+                    document.getElementById('content').innerHTML = 
+                        '<div class="error">⚠️ Henüz veri yok. Sistem ilk kez 23:00\'de çalışacak.</div>';
+                    return;
+                }
+                
+                displayStats(data);
+                displayTable(data);
+            } catch (error) {
+                document.getElementById('content').innerHTML = 
+                    '<div class="error">❌ Veri yüklenirken hata: ' + error + '</div>';
+            }
+        }
+
+        function displayStats(data) {
+            const latest = data[data.length - 1];
+            document.getElementById('lastUpdate').textContent = latest.date + ' ' + latest.time;
+            document.getElementById('dataCount').textContent = data.length + ' gün';
+        }
+
+        function displayTable(data) {
+            let html = `
+                <div class="chart-container">
+                    <h2 style="margin-bottom: 20px;">📋 Günlük Veri Kaydı</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>📅 Tarih</th>
+                                <th>🕐 Saat</th>
+                                <th>📝 Durum</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            data.slice().reverse().forEach(entry => {
+                const status = entry.data.status === 'success' ? '✅ Başarılı' : '❌ Hata';
+                html += `
+                    <tr>
+                        <td>${entry.date}</td>
+                        <td>${entry.time}</td>
+                        <td>${status}</td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            
+            document.getElementById('content').innerHTML = html;
+        }
+
+        // Sayfa yüklendiğinde ve her 5 dakikada yenile
+        loadData();
+        setInterval(loadData, 300000);
+    </script>
+</body>
+</html>
