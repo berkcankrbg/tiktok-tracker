@@ -134,7 +134,7 @@
                 
                 if (data.length === 0) {
                     document.getElementById('content').innerHTML = 
-                        '<div class="error">⚠️ Henüz veri yok. Sistem ilk kez 23:00\'de çalışacak.</div>';
+                        '<div class="error">⚠️ Henüz veri yok. Sistem ilk kez 00:00\'de çalışacak.</div>';
                     return;
                 }
                 
@@ -161,6 +161,9 @@
                             <tr>
                                 <th>📅 Tarih</th>
                                 <th>🕐 Saat</th>
+                                <th>👥 Followers</th>
+                                <th>📹 Videos</th>
+                                <th>❤️ Likes</th>
                                 <th>📝 Durum</th>
                             </tr>
                         </thead>
@@ -168,11 +171,22 @@
             `;
             
             data.slice().reverse().forEach(entry => {
-                const status = entry.data.status === 'success' ? '✅ Başarılı' : '❌ Hata';
+                let status = '❌ Hata';
+                if (entry.data?.status === 'success') {
+                    status = '✅ Başarılı';
+                }
+                
+                const followers = entry.data?.follower_count ? entry.data.follower_count.toLocaleString() : '-';
+                const videos = entry.data?.video_count || '-';
+                const likes = entry.data?.heart_count ? entry.data.heart_count.toLocaleString() : '-';
+                
                 html += `
                     <tr>
                         <td>${entry.date}</td>
                         <td>${entry.time}</td>
+                        <td>${followers}</td>
+                        <td>${videos}</td>
+                        <td>${likes}</td>
                         <td>${status}</td>
                     </tr>
                 `;
