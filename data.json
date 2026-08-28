@@ -109,5 +109,18 @@
       "status": "error",
       "error": "HTTP 403"
     }
+  },
+  {
+    "date": "2026-08-28",
+    "time": "05:09:37",
+    "username": "gzlyorum",
+    "data": {
+      "status": "success",
+      "username": "gzlyorum",
+      "follower_count": 10348,
+      "video_count": 48,
+      "heart_count": 133472,
+      "message": "Profil verisi başarıyla çekildi"
+    }
   }
 ]
