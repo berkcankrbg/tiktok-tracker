@@ -407,5 +407,14 @@
       "heart_count": 129757,
       "message": "Profil verisi başarıyla çekildi"
     }
+  },
+  {
+    "date": "2026-09-26",
+    "time": "23:25:48",
+    "username": "gzlyorum",
+    "data": {
+      "status": "error",
+      "error": "HTTP 403"
+    }
   }
 ]
