@@ -696,5 +696,18 @@
       "heart_count": 133644,
       "message": "Profil verisi başarıyla çekildi"
     }
+  },
+  {
+    "date": "2026-10-25",
+    "time": "23:05:26",
+    "username": "gzlyorum",
+    "data": {
+      "status": "success",
+      "username": "gzlyorum",
+      "follower_count": 10327,
+      "video_count": 45,
+      "heart_count": 134032,
+      "message": "Profil verisi başarıyla çekildi"
+    }
   }
 ]
